@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Project, projectsApi, Task, tasksApi, AgentRun, runsApi } from '@/lib/api'
+import { Project, projectsApi, Task, tasksApi, AgentRun, runsApi, UpdateProjectRequest } from '@/lib/api'
 import { useAuthStore } from './authStore'
 
 interface ProjectsState {
@@ -14,7 +14,7 @@ interface ProjectsState {
   fetchProjects: () => Promise<void>
   fetchProject: (id: string) => Promise<void>
   createProject: (name: string, description?: string) => Promise<Project>
-  updateProject: (id: string, data: Partial<Project>) => Promise<void>
+  updateProject: (id: string, data: UpdateProjectRequest) => Promise<void>
   deleteProject: (id: string) => Promise<void>
   fetchTasks: (projectId: string) => Promise<void>
   fetchRuns: (projectId: string) => Promise<void>
@@ -83,7 +83,7 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
     }
   },
 
-  updateProject: async (id: string, data: Partial<Project>) => {
+  updateProject: async (id: string, data: UpdateProjectRequest) => {
     const token = useAuthStore.getState().token
     if (!token) return
 

@@ -61,6 +61,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     return (
       <div ref={ref} className={clsx('relative inline-block', className)}>
         {src ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={src}
             alt={alt || name}

@@ -441,19 +441,16 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
         .service-card {
             background: var(--bg-tertiary);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 10px;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
-            z-index: 1;
         }
 
         .service-card:hover {
             border-color: var(--border-bright);
-            transform: translateY(-1px);
-            z-index: 100;
         }
 
         .service-card.selected {
@@ -473,7 +470,7 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
         .service-info {
@@ -547,39 +544,25 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
             height: 14px;
         }
 
-        /* Tooltip */
+        /* Tooltip - using fixed positioning */
         .tooltip {
-            position: absolute;
-            top: 50%;
-            left: 100%;
-            margin-left: 10px;
-            transform: translateY(-50%) translateX(-4px);
+            position: fixed;
             background: var(--bg-elevated);
             border: 1px solid var(--border-bright);
             border-radius: 8px;
             padding: 12px;
-            width: 240px;
-            z-index: 1000;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            width: 260px;
+            z-index: 9999;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             opacity: 0;
             visibility: hidden;
-            transition: all 0.2s ease;
+            pointer-events: none;
+            transition: opacity 0.15s ease;
         }
 
-        .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: -6px;
-            transform: translateY(-50%);
-            border: 6px solid transparent;
-            border-right-color: var(--border-bright);
-        }
-
-        .info-btn:hover .tooltip {
+        .tooltip.visible {
             opacity: 1;
             visibility: visible;
-            transform: translateY(-50%) translateX(0);
         }
 
         .tooltip-row {
@@ -618,8 +601,8 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
 
         /* Sparkline */
         .sparkline-container {
-            height: 24px;
-            margin: 10px 0;
+            height: 20px;
+            margin: 6px 0;
             position: relative;
         }
 
@@ -915,6 +898,13 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
                         <div class="log-meta" id="logMeta"></div>
                     </div>
                     <div class="log-header-actions">
+                        <button class="btn btn-ghost" onclick="copyLogs()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                            </svg>
+                            <span id="copyLabel">Copy</span>
+                        </button>
                         <button class="btn btn-ghost" onclick="toggleAutoScroll()">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M12 5v14M19 12l-7 7-7-7"/>
@@ -964,6 +954,9 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
         </main>
     </div>
 
+    <!-- Global Tooltip -->
+    <div class="tooltip" id="globalTooltip"></div>
+
     <!-- SVG Gradient Definition -->
     <svg width="0" height="0">
         <defs>
@@ -979,6 +972,7 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
         let autoScroll = true;
         let allLogs = {};
         let errorCounts = {};
+        let serviceData = {};
 
         async function api(endpoint, method = 'GET') {
             const res = await fetch('/api' + endpoint, { method });
@@ -987,6 +981,7 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
 
         async function refreshStatus() {
             const status = await api('/status');
+            serviceData = status;
             renderSidebar(status);
             updateSystemStatus(status);
         }
@@ -1004,24 +999,64 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
             if (!data || data.length === 0) {
                 data = Array(30).fill(0);
             }
-
             const width = 200;
-            const height = 24;
+            const height = 20;
             const max = Math.max(...data, 1);
             const points = data.map((val, i) => {
                 const x = (i / (data.length - 1)) * width;
                 const y = height - (val / max) * height;
                 return `${x},${y}`;
             }).join(' ');
-
             const fillPoints = `0,${height} ${points} ${width},${height}`;
-
             return `
                 <svg class="sparkline" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
                     <polygon class="sparkline-fill" points="${fillPoints}" style="fill: ${color}20"/>
                     <polyline class="sparkline-path" points="${points}" style="stroke: ${color}"/>
                 </svg>
             `;
+        }
+
+        function showTooltip(e, id) {
+            const svc = serviceData[id];
+            if (!svc) return;
+            const tooltip = document.getElementById('globalTooltip');
+            tooltip.innerHTML = `
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Path</span>
+                    <span class="tooltip-value">${svc.path}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Port</span>
+                    <span class="tooltip-value">${svc.port || 'N/A'}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Started</span>
+                    <span class="tooltip-value">${svc.started_at || 'Never'}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Logs</span>
+                    <span class="tooltip-value">${svc.log_count} lines</span>
+                </div>
+                <div class="tooltip-desc">${svc.description}</div>
+            `;
+            const rect = e.target.closest('.info-btn').getBoundingClientRect();
+            const tooltipWidth = 260;
+            let left = rect.right + 10;
+            let top = rect.top + (rect.height / 2) - 80;
+            // If tooltip would go off right edge, show on left
+            if (left + tooltipWidth > window.innerWidth - 20) {
+                left = rect.left - tooltipWidth - 10;
+            }
+            // Keep in viewport vertically
+            if (top < 10) top = 10;
+            if (top + 160 > window.innerHeight) top = window.innerHeight - 170;
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+            tooltip.classList.add('visible');
+        }
+
+        function hideTooltip() {
+            document.getElementById('globalTooltip').classList.remove('visible');
         }
 
         function renderSidebar(status) {
@@ -1039,31 +1074,12 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
                                 ${svc.running ? svc.uptime || 'Starting...' : 'Stopped'}
                             </div>
                         </div>
-                        <div class="info-btn" onclick="event.stopPropagation()">
+                        <div class="info-btn" onmouseenter="showTooltip(event, '${id}')" onmouseleave="hideTooltip()" onclick="event.stopPropagation()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"/>
                                 <line x1="12" y1="16" x2="12" y2="12"/>
                                 <line x1="12" y1="8" x2="12.01" y2="8"/>
                             </svg>
-                            <div class="tooltip">
-                                <div class="tooltip-row">
-                                    <span class="tooltip-label">Path</span>
-                                    <span class="tooltip-value">${svc.path}</span>
-                                </div>
-                                <div class="tooltip-row">
-                                    <span class="tooltip-label">Port</span>
-                                    <span class="tooltip-value">${svc.port || 'N/A'}</span>
-                                </div>
-                                <div class="tooltip-row">
-                                    <span class="tooltip-label">Started</span>
-                                    <span class="tooltip-value">${svc.started_at || 'Never'}</span>
-                                </div>
-                                <div class="tooltip-row">
-                                    <span class="tooltip-label">Logs</span>
-                                    <span class="tooltip-value">${svc.log_count} lines</span>
-                                </div>
-                                <div class="tooltip-desc">${svc.description}</div>
-                            </div>
                         </div>
                     </div>
                     <div class="sparkline-container">
@@ -1185,6 +1201,23 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
         function toggleAutoScroll() {
             autoScroll = !autoScroll;
             document.getElementById('autoScrollLabel').textContent = autoScroll ? 'Auto-scroll' : 'Scroll paused';
+        }
+
+        async function copyLogs() {
+            if (!selectedService || !allLogs[selectedService]) {
+                return;
+            }
+            const logs = allLogs[selectedService];
+            const text = logs.map(l => `[${l.time}] [${l.stream}] ${l.text}`).join('\\n');
+            try {
+                await navigator.clipboard.writeText(text);
+                document.getElementById('copyLabel').textContent = 'Copied!';
+                setTimeout(() => {
+                    document.getElementById('copyLabel').textContent = 'Copy';
+                }, 1500);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
         }
 
         function clearLogs() {

@@ -108,6 +108,12 @@ export interface CreateProjectRequest {
   default_repo_path?: string
 }
 
+export interface UpdateProjectRequest {
+  name?: string
+  description?: string | null
+  default_repo_path?: string | null
+}
+
 export const projectsApi = {
   list: (token: string) =>
     fetchApi<Project[]>('/projects', { token }),
@@ -122,7 +128,7 @@ export const projectsApi = {
       token,
     }),
 
-  update: (id: string, data: Partial<CreateProjectRequest>, token: string) =>
+  update: (id: string, data: UpdateProjectRequest, token: string) =>
     fetchApi<Project>(`/projects/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
