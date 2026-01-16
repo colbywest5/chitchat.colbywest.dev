@@ -191,7 +191,7 @@ class Artifact(Base):
     run_id = Column(UUID(as_uuid=True), ForeignKey("agent_runs.id", ondelete="SET NULL"), nullable=True)
     kind = Column(Text, nullable=False)
     storage_path = Column(Text, nullable=False)
-    metadata = Column(JSONB, nullable=False, default=dict)
+    meta = Column("metadata", JSONB, nullable=False, default=dict)  # 'metadata' is reserved in SQLAlchemy
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
 
