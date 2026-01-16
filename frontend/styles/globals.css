@@ -1,0 +1,346 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 250 250 250;
+    --foreground: 29 29 31;
+    --card: 255 255 255;
+    --card-foreground: 29 29 31;
+    --popover: 255 255 255;
+    --popover-foreground: 29 29 31;
+    --primary: 0 113 227;
+    --primary-foreground: 255 255 255;
+    --secondary: 245 245 247;
+    --secondary-foreground: 29 29 31;
+    --muted: 245 245 247;
+    --muted-foreground: 134 134 139;
+    --accent: 245 245 247;
+    --accent-foreground: 29 29 31;
+    --destructive: 255 59 48;
+    --destructive-foreground: 255 255 255;
+    --border: 210 210 215;
+    --input: 232 232 237;
+    --ring: 0 113 227;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 21 21 22;
+    --foreground: 245 245 247;
+    --card: 29 29 31;
+    --card-foreground: 245 245 247;
+    --popover: 37 37 40;
+    --popover-foreground: 245 245 247;
+    --primary: 0 113 227;
+    --primary-foreground: 255 255 255;
+    --secondary: 45 45 48;
+    --secondary-foreground: 245 245 247;
+    --muted: 45 45 48;
+    --muted-foreground: 134 134 139;
+    --accent: 45 45 48;
+    --accent-foreground: 245 245 247;
+    --destructive: 255 59 48;
+    --destructive-foreground: 255 255 255;
+    --border: 66 66 69;
+    --input: 45 45 48;
+    --ring: 0 113 227;
+  }
+
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar - minimal, Apple-style */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--muted-foreground) / 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--muted-foreground) / 0.5);
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--muted-foreground) / 0.3) transparent;
+  }
+
+  /* Selection highlight */
+  ::selection {
+    background: rgb(var(--primary) / 0.2);
+  }
+
+  /* Focus visible for accessibility */
+  :focus-visible {
+    outline: 2px solid rgb(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Glass effect for elevated surfaces */
+  .glass {
+    background: rgb(var(--card) / 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-strong {
+    background: rgb(var(--card) / 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* Gradient borders (Apple style) */
+  .border-gradient {
+    position: relative;
+  }
+
+  .border-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--border) / 0.6),
+      rgb(var(--border) / 0.2)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Subtle glow effect */
+  .glow {
+    box-shadow: 0 0 20px rgb(var(--primary) / 0.15);
+  }
+
+  .glow-sm {
+    box-shadow: 0 0 10px rgb(var(--primary) / 0.1);
+  }
+
+  /* Status indicator dot */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-dot-success {
+    @apply bg-success-500;
+  }
+
+  .status-dot-warning {
+    @apply bg-warning-500;
+  }
+
+  .status-dot-error {
+    @apply bg-error-500;
+  }
+
+  .status-dot-neutral {
+    @apply bg-gray-400;
+  }
+
+  /* Log/console text styles */
+  .log-text {
+    @apply font-mono text-xs leading-relaxed;
+  }
+
+  .log-stdout {
+    @apply text-gray-300;
+  }
+
+  .log-stderr {
+    @apply text-error-500;
+  }
+
+  .log-system {
+    @apply text-accent-400;
+  }
+
+  /* Metric value styles */
+  .metric-value {
+    @apply font-mono text-2xl font-semibold tracking-tight;
+  }
+
+  .metric-label {
+    @apply text-xs text-gray-500 uppercase tracking-wider;
+  }
+
+  .metric-delta-positive {
+    @apply text-success-500;
+  }
+
+  .metric-delta-negative {
+    @apply text-error-500;
+  }
+
+  /* Kanban column styles */
+  .kanban-column {
+    @apply flex flex-col min-h-0;
+  }
+
+  .kanban-column-header {
+    @apply flex items-center justify-between px-3 py-2 border-b border-gray-800;
+  }
+
+  .kanban-column-content {
+    @apply flex-1 overflow-y-auto p-2 space-y-2;
+  }
+
+  /* Panel styles for command center */
+  .panel {
+    @apply bg-gray-900 border border-gray-800 rounded-lg overflow-hidden;
+  }
+
+  .panel-header {
+    @apply flex items-center justify-between px-4 py-3 border-b border-gray-800;
+  }
+
+  .panel-title {
+    @apply text-sm font-medium text-gray-200;
+  }
+
+  .panel-content {
+    @apply p-4;
+  }
+
+  /* Interactive list item */
+  .list-item {
+    @apply flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-100;
+  }
+
+  .list-item:hover {
+    @apply bg-gray-800/50;
+  }
+
+  .list-item-active {
+    @apply bg-gray-800;
+  }
+
+  /* Form field group */
+  .field-group {
+    @apply space-y-1.5;
+  }
+
+  .field-label {
+    @apply block text-sm font-medium text-gray-300;
+  }
+
+  .field-description {
+    @apply text-xs text-gray-500;
+  }
+
+  .field-error {
+    @apply text-xs text-error-500;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Truncate with ellipsis */
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Safe area padding for mobile */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-400 to-accent-600;
+  }
+
+  /* Subtle divider */
+  .divider {
+    @apply border-t border-gray-800;
+  }
+
+  /* Aspect ratios */
+  .aspect-card {
+    aspect-ratio: 16 / 10;
+  }
+
+  /* Animation delays */
+  .delay-75 {
+    animation-delay: 75ms;
+  }
+
+  .delay-150 {
+    animation-delay: 150ms;
+  }
+
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+}
