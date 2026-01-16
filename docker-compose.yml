@@ -1,0 +1,78 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: overmind
+      POSTGRES_PASSWORD: overmind
+      POSTGRES_DB: overmind
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./_data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U overmind -d overmind"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./_data/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    env_file:
+      - ./.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./_data/backend:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker_orchestrator:
+    build: ./backend
+    env_file:
+      - ./.env
+    command: ["bash", "-lc", "python -m app.rqueue worker orchestrator"]
+    volumes:
+      - ./_data/backend:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker_transcription:
+    build: ./backend
+    env_file:
+      - ./.env
+    command: ["bash", "-lc", "python -m app.rqueue worker transcription"]
+    volumes:
+      - ./_data/backend:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    env_file:
+      - ./.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend

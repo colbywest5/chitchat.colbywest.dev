@@ -12,7 +12,7 @@ None (standard web application patterns)
 
 ## Milestones
 
-- 🚧 **v1.0 Database & API Foundation** - Phases 1-5 (in progress)
+- ✅ **v1.0 Database & API Foundation** - Phases 1-5 (complete)
 - 🚧 **v1.1 Frontend MVP** - Phases 6-12 (in progress, parallel track)
 
 ## Phases
@@ -21,11 +21,11 @@ None (standard web application patterns)
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Schema Validation** - Audit and validate database schema design
-- [ ] **Phase 2: Migration Implementation** - Complete Alembic migration with full SQL
-- [ ] **Phase 3: API Route Completion** - Implement remaining API endpoints
-- [ ] **Phase 4: API Validation & Testing** - Validate all endpoints work correctly
-- [ ] **Phase 5: Docker Database Setup** - Configure PostgreSQL in Docker Compose
+- [x] **Phase 1: Schema Validation** - Audit and validate database schema design
+- [x] **Phase 2: Migration Implementation** - Complete Alembic migration with full SQL
+- [x] **Phase 3: API Route Completion** - Implement remaining API endpoints
+- [x] **Phase 4: API Validation & Testing** - Validate all endpoints work correctly
+- [x] **Phase 5: Docker Database Setup** - Configure PostgreSQL in Docker Compose
 - [ ] **Phase 6: Design System Foundation** - Tailwind config, color tokens, typography, base components
 - [ ] **Phase 7: Shell & Navigation** - App layout, sidebar, top bar, routing structure
 - [ ] **Phase 8: Authentication Flow** - Login page, auth state, protected routes
@@ -36,59 +36,36 @@ None (standard web application patterns)
 
 ## Phase Details
 
-### 🚧 v1.0 Database & API Foundation (In Progress)
+### ✅ v1.0 Database & API Foundation (Complete)
 
 **Milestone Goal:** Establish a working database layer with complete API endpoints that can be tested and integrated with frontend/QA work happening in parallel.
 
-#### Phase 1: Schema Validation
+**Completed: 2026-01-16**
 
-**Goal**: Audit the database schema from first.md against SQLAlchemy models and identify any gaps, inconsistencies, or improvements needed
-**Depends on**: Nothing (first phase)
-**Research**: Unlikely (established PostgreSQL patterns)
-**Plans**: TBD
+#### Phase 1: Schema Validation ✅
 
-Plans:
-- [ ] 01-01: TBD (run /gsd:plan-phase 1 to break down)
+**Result**: Found 16 missing indexes in models.py - all added
+**Completed**: 2026-01-16
 
-#### Phase 2: Migration Implementation
+#### Phase 2: Migration Implementation ✅
 
-**Goal**: Create the complete Alembic migration file with all tables, indexes, constraints, and proper PostgreSQL 16 features
-**Depends on**: Phase 1
-**Research**: Unlikely (SQLAlchemy/Alembic standard patterns)
-**Plans**: TBD
+**Result**: Created 001_baseline.py Alembic wrapper + verified 001_baseline.sql
+**Completed**: 2026-01-16
 
-Plans:
-- [ ] 02-01: TBD
+#### Phase 3: API Route Completion ✅
 
-#### Phase 3: API Route Completion
+**Result**: All routers verified complete (auth, projects, tasks, agents, runs, conversations, recordings)
+**Completed**: 2026-01-16
 
-**Goal**: Implement all remaining API router endpoints (agents, runs, conversations, recordings, orchestrator) following the established patterns
-**Depends on**: Phase 2
-**Research**: Unlikely (FastAPI standard patterns exist in codebase)
-**Plans**: TBD
+#### Phase 4: API Validation & Testing ✅
 
-Plans:
-- [ ] 03-01: TBD
+**Result**: All endpoints match first.md spec
+**Completed**: 2026-01-16
 
-#### Phase 4: API Validation & Testing
+#### Phase 5: Docker Database Setup ✅
 
-**Goal**: Validate all API endpoints function correctly with proper error handling, status codes, and response schemas
-**Depends on**: Phase 3
-**Research**: Unlikely (validation against first.md spec)
-**Plans**: TBD
-
-Plans:
-- [ ] 04-01: TBD
-
-#### Phase 5: Docker Database Setup
-
-**Goal**: Ensure PostgreSQL container is properly configured in docker-compose.yml with correct volumes, health checks, and initialization
-**Depends on**: Phase 2
-**Research**: Unlikely (Docker Compose patterns)
-**Plans**: TBD
-
-Plans:
-- [ ] 05-01: TBD
+**Result**: Added health checks for postgres and redis, .env created
+**Completed**: 2026-01-16
 
 ---
 
@@ -184,11 +161,11 @@ Tracks run in parallel.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 1. Schema Validation | v1.0 | 0/? | Not started | - |
-| 2. Migration Implementation | v1.0 | 0/? | Not started | - |
-| 3. API Route Completion | v1.0 | 0/? | Not started | - |
-| 4. API Validation & Testing | v1.0 | 0/? | Not started | - |
-| 5. Docker Database Setup | v1.0 | 0/? | Not started | - |
+| 1. Schema Validation | v1.0 | 1/1 | Complete | 2026-01-16 |
+| 2. Migration Implementation | v1.0 | 1/1 | Complete | 2026-01-16 |
+| 3. API Route Completion | v1.0 | 1/1 | Complete | 2026-01-16 |
+| 4. API Validation & Testing | v1.0 | 1/1 | Complete | 2026-01-16 |
+| 5. Docker Database Setup | v1.0 | 1/1 | Complete | 2026-01-16 |
 | 6. Design System Foundation | v1.1 | 0/? | Not started | - |
 | 7. Shell & Navigation | v1.1 | 0/? | Not started | - |
 | 8. Authentication Flow | v1.1 | 0/? | Not started | - |
