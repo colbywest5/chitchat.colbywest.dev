@@ -1,0 +1,15 @@
+{
+  "mode": "interactive",
+  "depth": "standard",
+  "gates": {
+    "confirm_phases": true,
+    "confirm_plans": true,
+    "verify_before_commit": true
+  },
+  "preferences": {
+    "design_system": "apple-space-gray",
+    "animation_level": "minimal",
+    "layout_style": "command-center",
+    "data_viz_style": "stocks-finance"
+  }
+}
